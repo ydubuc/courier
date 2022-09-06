@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MultipartFormDataRequest {
+public struct MultipartFormDataRequest {
     let boundary: String = UUID().uuidString
     private var httpBody = NSMutableData()
 

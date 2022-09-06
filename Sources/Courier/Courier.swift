@@ -2,24 +2,22 @@ import Foundation
 
 public struct Courier {
     // properties
-    private var apiUrl: String
-    private var session = URLSession(configuration: defaultConfiguration())
+    private let url: String
+    private let session: URLSession
 
     // init
-    init(url: String, session: URLSession? = nil) {
+    public init(url: String, session: URLSession? = nil) {
         guard url.hasSuffix("/")
         else {
-            preconditionFailure("API_URL must end in /")
+            preconditionFailure("Courier url must end in /")
         }
 
-        self.apiUrl = url
-        if let session = session {
-            self.session = session
-        }
+        self.url = url
+        self.session = session ?? URLSession(configuration: Courier.defaultConfiguration())
     }
 
     // functions
-    func get<T: Codable>(
+    public func get<T: Codable>(
         path: String,
         headers: [String: String] = [:],
         queries: [String: Any] = [:],
@@ -57,7 +55,7 @@ public struct Courier {
         .resume()
     }
 
-    func post<T: Codable>(
+    public func post<T: Codable>(
         path: String,
         headers: [String: String] = [:],
         body: Data,
@@ -96,7 +94,7 @@ public struct Courier {
         .resume()
     }
 
-    func post<T: Codable>(
+    public func post<T: Codable>(
         path: String,
         headers: [String: String] = [:],
         form: MultipartFormDataRequest,
@@ -135,7 +133,7 @@ public struct Courier {
         .resume()
     }
 
-    func patch<T: Codable>(
+    public func patch<T: Codable>(
         path: String,
         headers: [String: String] = [:],
         body: Data,
@@ -174,7 +172,7 @@ public struct Courier {
         .resume()
     }
 
-    func delete(
+    public func delete(
         path: String,
         headers: [String: String] = [:],
         completion: @escaping (Error?) -> Void
@@ -205,7 +203,7 @@ public struct Courier {
         _ path: String,
         _ headers: [String: String]
     ) -> URLRequest {
-        var request = URLRequest(url: URL(string: apiUrl + path)!)
+        var request = URLRequest(url: URL(string: url + path)!)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         for header in headers {
             request.addValue(header.value, forHTTPHeaderField: header.key)
@@ -219,7 +217,7 @@ public struct Courier {
         _ boundary: String,
         _ headers: [String: String]
     ) -> URLRequest {
-        var request = URLRequest(url: URL(string: apiUrl + path)!)
+        var request = URLRequest(url: URL(string: url + path)!)
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         for header in headers {
             request.addValue(header.value, forHTTPHeaderField: header.key)

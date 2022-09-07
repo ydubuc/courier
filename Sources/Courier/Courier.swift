@@ -36,6 +36,7 @@ public struct Courier {
             if let httpRes = res as? HTTPURLResponse {
                 guard (200...299).contains(httpRes.statusCode)
                 else {
+                    let error = ApiErrorHandler.getError(data: data, httpRes: httpRes)
                     return handleCompletion(nil, error)
                 }
             }
@@ -75,6 +76,7 @@ public struct Courier {
             if let httpRes = res as? HTTPURLResponse {
                 guard (200...299).contains(httpRes.statusCode)
                 else {
+                    let error = ApiErrorHandler.getError(data: data, httpRes: httpRes)
                     return handleCompletion(nil, error)
                 }
             }
@@ -114,6 +116,7 @@ public struct Courier {
             if let httpRes = res as? HTTPURLResponse {
                 guard (200...299).contains(httpRes.statusCode)
                 else {
+                    let error = ApiErrorHandler.getError(data: data, httpRes: httpRes)
                     return handleCompletion(nil, error)
                 }
             }
@@ -153,6 +156,7 @@ public struct Courier {
             if let httpRes = res as? HTTPURLResponse {
                 guard (200...299).contains(httpRes.statusCode)
                 else {
+                    let error = ApiErrorHandler.getError(data: data, httpRes: httpRes)
                     return handleCompletion(nil, error)
                 }
             }
@@ -190,6 +194,7 @@ public struct Courier {
             if let httpRes = res as? HTTPURLResponse {
                 guard (200...299).contains(httpRes.statusCode)
                 else {
+                    let error = ApiErrorHandler.getError(data: data, httpRes: httpRes)
                     return handleCompletion(error)
                 }
             }

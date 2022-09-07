@@ -1,5 +1,5 @@
 //
-//  MultipartFormDataRequest.swift
+//  CourierFormDataRequest.swift
 //  
 //
 //  Created by Yoan Dubuc on 8/30/22.
@@ -7,10 +7,14 @@
 
 import Foundation
 
-public struct MultipartFormDataRequest {
+public struct CourierFormDataRequest {
+    // properties
     let boundary: String = UUID().uuidString
     private var httpBody = NSMutableData()
-
+    
+    public init() { }
+    
+    // functions
     func addTextField(named name: String, value: String) {
         httpBody.append(textFormField(named: name, value: value))
     }
@@ -30,10 +34,7 @@ public struct MultipartFormDataRequest {
         httpBody.append(dataFormField(named: name, data: data))
     }
 
-    private func dataFormField(
-        named name: String,
-        data: Data
-    ) -> Data {
+    private func dataFormField(named name: String, data: Data) -> Data {
         let fieldData = NSMutableData()
 
         fieldData.append("--\(boundary)\r\n")

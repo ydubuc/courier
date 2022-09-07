@@ -58,7 +58,7 @@ public struct Courier {
     public func post<T: Codable>(
         path: String,
         headers: [String: String] = [:],
-        body: Data,
+        body: Data?,
         completion: @escaping (T?, Error?) -> Void
     ) {
         func handleCompletion(_ result: T?, _ error: Error?) {
@@ -97,7 +97,7 @@ public struct Courier {
     public func post<T: Codable>(
         path: String,
         headers: [String: String] = [:],
-        form: MultipartFormDataRequest,
+        form: CourierFormDataRequest,
         completion: @escaping (T?, Error?) -> Void
     ) {
         func handleCompletion(_ result: T?, _ error: Error?) {

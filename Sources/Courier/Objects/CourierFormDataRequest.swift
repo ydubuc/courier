@@ -9,13 +9,13 @@ import Foundation
 
 public struct CourierFormDataRequest {
     // properties
-    let boundary: String = UUID().uuidString
+    internal let boundary: String = UUID().uuidString
     private var httpBody = NSMutableData()
     
     public init() { }
     
     // functions
-    func addTextField(named name: String, value: String) {
+    public func addTextField(named name: String, value: String) {
         httpBody.append(textFormField(named: name, value: value))
     }
 
@@ -30,7 +30,7 @@ public struct CourierFormDataRequest {
         return fieldString
     }
 
-    func addDataField(named name: String, data: Data) {
+    public func addDataField(named name: String, data: Data) {
         httpBody.append(dataFormField(named: name, data: data))
     }
 
@@ -47,7 +47,7 @@ public struct CourierFormDataRequest {
         return fieldData as Data
     }
 
-    func getBody() -> Data {
+    internal func getBody() -> Data {
         httpBody.append("--\(boundary)--")
         return httpBody as Data
     }

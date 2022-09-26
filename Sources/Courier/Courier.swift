@@ -35,7 +35,7 @@ public struct Courier {
 
         var request: URLRequest
         do {
-            request = try newRequest(pathifyQueries(path, queries), headers)
+            request = try newRequest(path, headers, queries)
         } catch let e {
             return handleCompletion(nil, e)
         }
@@ -240,9 +240,11 @@ public struct Courier {
 
     private func newRequest(
         _ path: String,
-        _ headers: [String: String]
+        _ headers: [String: String],
+        _ queries: [String: Any]? = nil
     ) throws -> URLRequest {
-        guard let path = safePath(path), let url = URL(string: url + path)
+        guard let path = safePath(path),
+              let url = URL(string: url + (queries != nil ? pathifyQueries(path, queries!) : path))
         else {
             throw Terror("Invalid URL")
         }

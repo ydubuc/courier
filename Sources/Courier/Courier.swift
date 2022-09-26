@@ -7,6 +7,10 @@ public struct Courier {
 
     // init
     public init(url: String, session: URLSession? = nil) {
+        guard url.hasPrefix("https://")
+        else {
+            preconditionFailure("Courier url must start in http://")
+        }
         guard url.hasSuffix("/")
         else {
             preconditionFailure("Courier url must end in /")
@@ -29,7 +33,13 @@ public struct Courier {
             }
         }
 
-        var request = newRequest(pathifyQueries(path, queries), headers)
+        var request: URLRequest
+        do {
+            request = try newRequest(pathifyQueries(path, queries), headers)
+        } catch let e {
+            return handleCompletion(nil, e)
+        }
+        
         request.httpMethod = "GET"
 
         session.dataTask(with: request) { (data, res, error) in
@@ -68,7 +78,13 @@ public struct Courier {
             }
         }
 
-        var request = newRequest(path, headers)
+        var request: URLRequest
+        do {
+            request = try newRequest(path, headers)
+        } catch let e {
+            return handleCompletion(nil, e)
+        }
+        
         request.httpMethod = "POST"
         request.httpBody = body
 
@@ -108,7 +124,13 @@ public struct Courier {
             }
         }
 
-        var request = newMultipartRequest(path, form.boundary, headers)
+        var request: URLRequest
+        do {
+            request = try newRequest(path, headers)
+        } catch let e {
+            return handleCompletion(nil, e)
+        }
+        
         request.httpMethod = "POST"
         request.httpBody = form.getBody()
 
@@ -148,7 +170,13 @@ public struct Courier {
             }
         }
 
-        var request = newRequest(path, headers)
+        var request: URLRequest
+        do {
+            request = try newRequest(path, headers)
+        } catch let e {
+            return handleCompletion(nil, e)
+        }
+        
         request.httpMethod = "PATCH"
         request.httpBody = body
 
@@ -187,7 +215,13 @@ public struct Courier {
             }
         }
 
-        var request = newRequest(path, headers)
+        var request: URLRequest
+        do {
+            request = try newRequest(path, headers)
+        } catch let e {
+            return handleCompletion(e)
+        }
+        
         request.httpMethod = "DELETE"
 
         session.dataTask(with: request) { (data, res, error) in
@@ -207,8 +241,13 @@ public struct Courier {
     private func newRequest(
         _ path: String,
         _ headers: [String: String]
-    ) -> URLRequest {
-        var request = URLRequest(url: URL(string: url + path)!)
+    ) throws -> URLRequest {
+        guard let path = safePath(path), let url = URL(string: url + path)
+        else {
+            throw Terror("Invalid URL")
+        }
+        
+        var request = URLRequest(url: url)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         for header in headers {
             request.addValue(header.value, forHTTPHeaderField: header.key)
@@ -221,14 +260,23 @@ public struct Courier {
         _ path: String,
         _ boundary: String,
         _ headers: [String: String]
-    ) -> URLRequest {
-        var request = URLRequest(url: URL(string: url + path)!)
+    ) throws -> URLRequest {
+        guard let path = safePath(path), let url = URL(string: url + path)
+        else {
+            throw Terror("Invalid URL")
+        }
+        
+        var request = URLRequest(url: url)
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         for header in headers {
             request.addValue(header.value, forHTTPHeaderField: header.key)
         }
 
         return request
+    }
+    
+    private func safePath(_ path: String) -> String? {
+        return path.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
     }
 
     private func pathifyQueries(_ path: String, _ queries: [String: Any]) -> String {

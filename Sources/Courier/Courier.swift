@@ -276,7 +276,7 @@ public struct Courier {
     }
     
     private func safePath(_ path: String) -> String? {
-        return path.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+        return path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)
     }
 
     private func pathifyQueries(_ path: String, _ queries: [String: Any]) -> String {

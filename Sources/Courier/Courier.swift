@@ -7,9 +7,9 @@ public struct Courier {
 
     // init
     public init(url: String, session: URLSession? = nil) {
-        guard url.hasPrefix("https://")
+        guard url.hasPrefix("https://") || url.hasPrefix("http://")
         else {
-            preconditionFailure("Courier url must start in http://")
+            preconditionFailure("Courier url must start in https:// or http://")
         }
         guard url.hasSuffix("/")
         else {
@@ -126,7 +126,7 @@ public struct Courier {
 
         var request: URLRequest
         do {
-            request = try newRequest(path, headers)
+            request = try newMultipartRequest(path, form.boundary, headers)
         } catch let e {
             return handleCompletion(nil, e)
         }
@@ -263,7 +263,8 @@ public struct Courier {
         _ boundary: String,
         _ headers: [String: String]
     ) throws -> URLRequest {
-        guard let path = safePath(path), let url = URL(string: url + path)
+        guard let path = safePath(path),
+              let url = URL(string: url + path)
         else {
             throw Terror("Invalid URL")
         }

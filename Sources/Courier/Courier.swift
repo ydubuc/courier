@@ -288,17 +288,22 @@ public struct Courier {
             return path
         }
 
-        var truePath = path + "?"
+        var queryPath = "?"
 
         for (index, query) in queries.enumerated() {
             let queryValue = "\(query.value)".replacingOccurrences(of: " ", with: "+")
-            truePath += query.key + "=" + queryValue
+            queryPath += query.key + "=" + queryValue
             if index != queries.count - 1 {
-                truePath += "&"
+                queryPath += "&"
             }
         }
 
-        return truePath
+        guard let encodedQueryPath = queryPath.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        else {
+            return ""
+        }
+        
+        return path + encodedQueryPath
     }
 
     private static func defaultConfiguration() -> URLSessionConfiguration {
